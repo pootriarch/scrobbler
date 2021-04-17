@@ -1,3 +1,7 @@
+v1.1.4.1, 2021-03-01
+ - Accepts albumartist parameters for passing to last.fm; useful when
+   scrobbling compilations.
+
 v1.1.4, 2017-10-24
  - Can now use double dashes (--) in `scrobble` and `now-playing`
    commands to separate options and position parameters.

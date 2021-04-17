@@ -20,9 +20,16 @@
 
 
 NAME        = "scrobbler"
-VERSION     = "1.1.4"
+VERSION     = "1.1.4.1"
 
 AUTHOR_FIRST_NAME   = "Никола"
 AUTHOR_LAST_NAME    = "Вукосављевић"
 AUTHOR_NICK         = "hauzer"
 AUTHOR              = "{} \"{}\" {}".format(AUTHOR_FIRST_NAME, AUTHOR_NICK, AUTHOR_LAST_NAME)
+
+FORK_AUTHOR_PRENOM  = "Michael"
+FORK_AUTHOR_NOM     = "Ho"
+FORK_AUTHOR_NICK    = "pootriarch"
+FORK_AUTHOR         = FORK_AUTHOR_NICK
+
+MAINTAINER_NICK     = FORK_AUTHOR_NICK

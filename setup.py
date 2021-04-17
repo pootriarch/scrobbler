@@ -39,9 +39,8 @@ setup(name              = "{}h".format(info.NAME),
       description       = "A command-line Last.fm scrobbler and a now-playing status updater.",
       long_description  = open("README.rst", "r").read(),
       license           = "GPLv3",
-      url               = "https://github.com/{}/{}/".format(info.AUTHOR_NICK, info.NAME),
-      # download_url      = "https://bitbucket.org/{}/{}/downloads".format(info.AUTHOR_NICK, info.NAME),
-      
+      url               = "https://github.com/{}/{}/".format(info.MAINTAINER_NICK, info.NAME),
+
       classifiers = [
                      "Development Status :: 4 - Beta",
                      "Environment :: Console",

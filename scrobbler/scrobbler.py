@@ -71,7 +71,7 @@ class Error(Exception):
     """
     An error intended to be printed for the user.
     """
-    
+
     def __init__(self, msg):
         super().__init__("Error: {}.".format(msg))
 
@@ -137,7 +137,7 @@ def auth(app, dbc, user):
 def cmd_add_user(app, dbc, args):
     """
 Add a user to the list of known users.
-    
+
 usage: scrobbler add-user [[<user> [--password=<password>]]|[--dont-invoke-browser]]
 
 options:
@@ -146,10 +146,10 @@ options:
                                             always show the authentication URL; never try
                                             to automatically open it.
     """
-    
+
     if args["<user>"] is None:
         token = app.auth.get_token()
-        
+
         if args["--dont-invoke-browser"]:
             print("Last.fm authentication URL: {}".format(token.url))
         else:
@@ -158,10 +158,10 @@ options:
                 webbrowser.open(token.url)
             except webbrowser.Error:
                 print(token.url)
-    
+
         input("Press enter after granting access.")
         session = app.auth.get_session(token)
-    
+
         exit_if_user_exists(dbc, session["name"])
 
     else:
@@ -185,7 +185,7 @@ List all known users.
 
 usage: scrobbler list-users
     """
-   
+
     dbc.execute("select * from sessions")
     for (user, key) in dbc.fetchall():
         print("{}\t\t| {}".format(user, key))
@@ -208,13 +208,14 @@ def cmd_scrobble(app, dbc, args):
     """
 Scrobble a track.
 
-usage: scrobbler scrobble [--album=<name>] [--duration=<duration>] [--time-format=<format>]
+usage: scrobbler scrobble [--album=<name>] [--duration=<duration>] [--time-format=<format>] [--album-artist=<albumartist>]
                           [--] <user> <artist> <track> <time>
 
 
 options:
     -f <format>, --time-format=<format>     [default: %Y-%m-%d.%H:%M]
     -a <name>, --album=<name>
+    --album-artist=<albumartist>
     -d <duration>, --duration=<duration>    Has the format of XXhYYmZZs. At least one of
                                             those has to be present, but any number of them
                                             can be specified, and in any order.
@@ -228,19 +229,21 @@ options:
         timestamp = datetime.strptime(args["<time>"], args["--time-format"]).timestamp()
 
     scrobble = lfm.Scrobble(args["<artist>"], args["<track>"], int(timestamp),
-                            album = args["--album"], duration = duration_to_seconds(args["--duration"]))
+                            album = args["--album"],
+                            albumartist = args["--album-artist"],
+                            duration = duration_to_seconds(args["--duration"]))
 
-    resp = app.track.scrobble([scrobble]) 
+    resp = app.track.scrobble([scrobble])
     if int(resp["@attr"]["ignored"]) != 0:
         raise Error(resp["scrobble"]["ignoredMessage"]["#text"])
 
     print("Track scrobbled.")
-    
+
 
 def cmd_now_playing(app, dbc, args):
     """
 Update the now-playing status.
-    
+
 usage: scrobbler now-playing [--album=<name>] [--duration=<duration>] [--] <user> <artist> <track>
 
 options:
@@ -249,7 +252,7 @@ options:
                                           those has to be present, but any number of them
                                           can be specified, and in any order.
     """
-    
+
     auth(app, dbc, args["<user>"])
     app.track.update_now_playing(args["<artist>"], args["<track>"],
                                  album = args["--album"], duration = duration_to_seconds(args["--duration"]))
@@ -263,7 +266,7 @@ def main():
         db_file = USERS_DB_FILE
     else:
         db_file = args["--sessions-file"]
-   
+
     if args["--liblfm-file"] is None:
         liblfm_file = LIBLFM_FILE
     else:
@@ -274,7 +277,7 @@ def main():
 
     db = sqlite3.connect(db_file)
     dbc = db.cursor()
-    
+
     if not db_table_exists_sessions(dbc):
         db_create_table_sessions(dbc)
 
@@ -285,7 +288,7 @@ def main():
         except KeyError as e:
             raise Error("Unknown command '{}'".format(args["<command>"]))
 
-        cmd_args = docopt(cmd.__doc__, argv = [args["<command>"]] + args["<args>"])   
+        cmd_args = docopt(cmd.__doc__, argv = [args["<command>"]] + args["<args>"])
 
         try:
             cmd(app, dbc, cmd_args)
@@ -294,7 +297,7 @@ def main():
 
     except (Error, lastfm.exceptions.RequestError) as e:
         print(e)
-    
+
     db.commit()
     db.close()
 
