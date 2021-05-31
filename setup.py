@@ -27,7 +27,7 @@ from    setuptools  import  setup, find_packages
 setup(name              = "{}h".format(info.NAME),
       version           = info.VERSION,
       packages          = find_packages(),
-      install_requires  = ["appdirs", "docopt", "lfmh"],
+      install_requires  = ["appdirs", "docopt", "lfmh ==1.1.2"],
       entry_points      = {
         "console_scripts": [
             "scrobbler = scrobbler.scrobbler:main"
